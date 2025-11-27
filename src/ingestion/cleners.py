@@ -1,5 +1,5 @@
 import re
-from src.core.interfaces import BaseCleaner
+from core.interfces import BaseCleaner
 
 class MedicalTextCleaner(BaseCleaner):
     """
