@@ -18,5 +18,5 @@ qdrant_storage/
 # Models
 models/
 
-#Passwords
+#Password
 .env
