@@ -4,8 +4,8 @@ services:
     container_name: medirag_qdrant
     restart: always
     ports:
-      - "6333:6333" # Puerto para la API REST
-      - "6334:6334" # Puerto para GRPC (más rápido para ingestión masiva)
+      - "6333:6333"
+      - "6334:6334"
     volumes:
       - ./qdrant_storage:/qdrant/storage:z
     environment:
