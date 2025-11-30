@@ -53,6 +53,7 @@ class MedicalTextSplitter:
                 for child in child_chunks:
                     # El hijo apunta al padre via 'parent_id'
                     child.metadata["parent_id"] = parent_id
+                    child.metadata["doc_id"] = str(uuid.uuid4())
                     child.metadata["type"] = "child"
                     # Hereda metadatos originales (fuente, página, etc.)
                     
