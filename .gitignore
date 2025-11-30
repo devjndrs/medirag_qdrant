@@ -14,3 +14,9 @@ qdrant_storage/
 
 # Virtual environments
 .venv
+
+# Models
+models/
+
+#Passwords
+.env
