@@ -5,184 +5,174 @@
 ![LangChain](https://img.shields.io/badge/LangChain-Framework-green?style=for-the-badge&logo=langchain&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Containerization-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-## 📖 Introducción
+## 📖 Introduction
 
-**MediRAG** es un sistema de **Generación Aumentada por Recuperación (RAG)** de grado industrial diseñado para el dominio médico. A diferencia de los tutoriales básicos de RAG, este proyecto se centra en la **ingeniería de datos robusta**, la arquitectura modular y los patrones de diseño avanzados necesarios para desplegar sistemas de IA generativa en producción.
+**MediRAG** is an industrial-grade **Retrieval-Augmented Generation (RAG)** system designed for the medical domain. Unlike basic RAG tutorials, this project focuses on **robust data engineering**, modular architecture, and advanced design patterns required to deploy generative AI systems in production.
 
-Este repositorio no es solo un chatbot; es una implementación de referencia de cómo construir pipelines de datos resilientes, escalables y mantenibles para aplicaciones de LLM.
-
----
-
-## 🎯 Importancia para Equipos de ML e IA
-
-En el ecosistema actual de IA Generativa, el **80% del éxito de un sistema RAG reside en la calidad de su ingeniería de datos**, no solo en el modelo de lenguaje elegido.
-
-Para un equipo de ML/IA, adoptar un enfoque de ingeniería como el de MediRAG ofrece ventajas críticas:
-
-### 🚀 Ventajas Competitivas
-1.  **Reproducibilidad y Determinismo**: El uso de entornos gestionados (`uv`, Docker) y pipelines orquestados elimina el problema de "funciona en mi máquina".
-2.  **Calidad de Datos Superior**: La implementación de estrategias de *Parent-Child Splitting* y *Reranking* asegura que el LLM reciba contexto preciso, reduciendo drásticamente las alucinaciones.
-3.  **Mantenibilidad a Largo Plazo**: La arquitectura basada en principios **SOLID** y **Dependency Injection** permite cambiar componentes (ej. cambiar Qdrant por Pinecone, o Gemini por GPT-4) sin reescribir el núcleo del sistema.
-4.  **Observabilidad y Testing**: Tratar los datos como código mediante tests de integridad y pipelines de validación E2E permite detectar degradación en la calidad de las respuestas antes de llegar a producción.
+This repository is not just a chatbot; it is a reference implementation of how to build resilient, scalable, and maintainable data pipelines for LLM applications.
 
 ---
 
-## 🏗️ Arquitectura y Fases del Proyecto
+## 🎯 Importance for ML and AI Teams
 
-### 🔹 Fase 1: Infraestructura y Pipeline de Ingestión (Data Engineering)
-Establecimiento de una base sólida enfocada en la reproducibilidad y escalabilidad.
+In the current Generative AI ecosystem, **80% of a RAG system's success lies in the quality of its data engineering**, not just the chosen language model.
 
-*   **Gestión de Dependencias**: Uso de `uv` para entornos virtuales deterministas.
-*   **Vector Database**: Despliegue de **Qdrant** vía Docker Compose con persistencia de datos.
-*   **ETL Modular (SOLID)**:
-    *   **Abstracción**: Interfaces `BaseLoader` y `BaseCleaner` para extensibilidad.
-    *   **Extracción**: `PDFLoader` optimizado con `pypdf`.
-    *   **Limpieza**: `MedicalTextCleaner` inyectado como dependencia para facilitar tests.
+For an ML/AI team, adopting an engineering approach like MediRAG offers critical advantages:
 
-### 🔹 Fase 2: Transformación y Estrategia de Recuperación
-Transformación de data cruda en estructuras optimizadas para búsqueda semántica.
+### 🚀 Competitive Advantages
+1.  **Reproducability and Determinism**: Using managed environments (`uv`, Docker) and orchestrated pipelines eliminates the "it works on my machine" problem.
+2.  **Superior Data Quality**: Implementing *Parent-Child Splitting* and *Reranking* strategies ensures the LLM receives precise context, drastically reducing hallucinations.
+3.  **Long-Term Maintainability**: The architecture based on **SOLID** principles and **Dependency Injection** allows swapping components (e.g., changing Qdrant for Pinecone, or Gemini for GPT-4) without rewriting the core system.
+4.  **Observability and Testing**: Treating data as code through integrity tests and E2E validation pipelines allows detecting degradation in response quality before reaching production.
+
+---
+
+## 🏗️ Architecture and Project Phases
+
+### 🔹 Phase 1: Infrastructure and Ingestion Pipeline (Data Engineering)
+Establishing a solid foundation focused on reproducibility and scalability.
+
+*   **Dependency Management**: Using `uv` for deterministic virtual environments.
+*   **Vector Database**: Deploying **Qdrant** via Docker Compose with data persistence.
+*   **Modular ETL (SOLID)**:
+    *   **Abstraction**: `BaseLoader` and `BaseCleaner` interfaces for extensibility.
+    *   **Extraction**: `PDFLoader` optimized with `pypdf`.
+    *   **Cleaning**: `MedicalTextCleaner` injected as a dependency to facilitate testing.
+
+### 🔹 Phase 2: Transformation and Retrieval Strategy
+Transforming raw data into optimized structures for semantic search.
 
 *   **Parent-Document Pattern**:
-    *   *Child Chunks*: Pequeños, optimizados para búsqueda vectorial (similitud coseno).
-    *   *Parent Chunks*: Grandes, optimizados para dar contexto completo al LLM.
-*   **Vectorización Local**: Uso de `sentence-transformers` para inferencia rápida y sin coste.
-*   **Ingestión por Lotes**: Carga masiva en Qdrant para optimizar I/O de red.
+    *   *Child Chunks*: Small, optimized for vector search (cosine similarity).
+    *   *Parent Chunks*: Large, optimized to provide full context to the LLM.
+*   **Local Vectorization**: Using `sentence-transformers` for fast, cost-free inference.
+*   **Batch Ingestion**: Bulk loading into Qdrant to optimize network I/O.
 
-### 🔹 Fase 3: Orquestación Inteligente (Advanced RAG)
-Evolución hacia un asistente conversacional con razonamiento refinado.
+### 🔹 Phase 3: Intelligent Orchestration (Advanced RAG)
+Evolution towards a conversational assistant with refined reasoning.
 
-*   **LLM Integration**: Google Gemini 1.5 Flash para síntesis de respuestas.
-*   **Memoria Conversacional**: Sistema de ventana deslizante para mantener contexto del chat.
-*   **Query Rewriting**: Reformulación de preguntas basada en el historial para mejorar el retrieval.
+*   **LLM Integration**: Google Gemini 1.5 Flash for response synthesis.
+*   **Conversational Memory**: Sliding window system to maintain chat context.
+*   **Query Rewriting**: Rephrasing user questions based on history to improve retrieval.
 *   **Two-Stage Retrieval**:
-    1.  **Wide Fetch**: Búsqueda vectorial rápida (High Recall).
-    2.  **Deep Rerank**: Reordenamiento con **FlashRank** (Cross-Encoder) para máxima precisión semántica.
+    1.  **Wide Fetch**: Fast vector search (High Recall).
+    2.  **Deep Rerank**: Reordering with **FlashRank** (Cross-Encoder) for maximum semantic precision.
 
-### 🔹 Fase 4: Validación y CI/CD de Datos
-Garantía de fiabilidad en entornos productivos.
+### 🔹 Phase 4: Validation and Data CI/CD
+Ensuring reliability in production environments.
 
-*   **Pipeline de Pruebas E2E**: Orquestador (`src/run_pipeline.py`) que valida secuencialmente:
-    1.  Sanity Checks (Entorno/DB).
-    2.  Integridad de Datos (ETL).
-    3.  Lógica de Transformación.
-    4.  Calidad de Retrieval y Reranking.
-    5.  Generación Final.
+*   **E2E Testing Pipeline**: Orchestrator (`src/run_pipeline.py`) that sequentially validates:
+    1.  Sanity Checks (Environment/DB).
+    2.  Data Integrity (ETL).
+    3.  Transformation Logic.
+    4.  Retrieval and Reranking Quality.
+    5.  Final Generation.
 
 ---
 
-## 🛠️ Guía de Instalación y Uso
+## 🛠️ Installation and Usage Guide
 
-### Prerrequisitos
-*   **Docker** y **Docker Compose** instalados.
+### Prerequisites
+*   **Docker** and **Docker Compose** installed.
 *   **Python 3.11+**.
-*   **uv** (Recomendado) o `pip`.
-*   API Key de Google Gemini (en `.env`).
+*   **uv** (Recommended) or `pip`.
+*   Google Gemini API Key (in `.env`).
 
-### 1. Configuración del Entorno
+### 1. Environment Setup
 
 ```bash
-# Clonar el repositorio
+# Clone the repository
 git clone <repo-url>
 cd chatbotMedico
 
-# Crear entorno virtual e instalar dependencias
+# Create virtual environment and install dependencies
 uv venv
 source .venv/bin/activate
-uv pip install -r pyproject.toml  # O requirements.txt si se genera
+uv pip install -r pyproject.toml  # Or requirements.txt if generated
 ```
 
-### 2. Levantar Infraestructura
+### 2. Launch Infrastructure
 
 ```bash
-# Iniciar Qdrant
+# Start Qdrant
 docker-compose up -d
 ```
 
-### 3. Ejecutar Pipeline Completo (Validación E2E)
+### 3. Run Full Pipeline (E2E Validation)
 
-Para ejecutar todo el flujo, desde la ingesta hasta la prueba del chat, utiliza el orquestador:
+To execute the entire flow, from ingestion to chat testing, use the orchestrator:
 
 ```bash
 python src/run_pipeline.py
 ```
 
-Este comando ejecutará automáticamente:
-*   Verificación de conexión a Qdrant.
-*   Descarga del paper médico de muestra.
-*   Procesamiento, limpieza y vectorización.
-*   Pruebas de búsqueda y generación de respuesta.
+This command will automatically execute:
+*   Qdrant connection verification.
+*   Sample medical paper download.
+*   Processing, cleaning, and vectorization.
+*   Search and response generation tests.
 
 ---
 
-## 📂 Estructura del Proyecto
+## 📂 Project Structure
 
 ```text
 src/
-├── core/           # Configuración y definiciones de tipos
-├── ingestion/      # Loaders, Cleaners y Splitters (ETL)
-├── retrieval/      # Lógica de búsqueda y Reranking
-├── generation/     # Integración con LLM y cadenas RAG
-├── vector_store/   # Cliente y gestión de Qdrant
-├── testing/        # Tests unitarios y de integración
-└── run_pipeline.py # Orquestador maestro
+├── core/           # Configuration and type definitions
+├── ingestion/      # Loaders, Cleaners, and Splitters (ETL)
+├── retrieval/      # Search logic and Reranking
+├── generation/     # LLM integration and RAG chains
+├── vector_store/   # Qdrant client and management
+├── testing/        # Unit and integration tests
+└── run_pipeline.py # Master orchestrator
 ```
 
 ---
 
-> **Nota**: Este proyecto demuestra que un sistema RAG efectivo es mucho más que un script de 50 líneas. Es un sistema de ingeniería de software completo que requiere diseño, pruebas y una arquitectura sólida.
+> **Note**: This project demonstrates that an effective RAG system is much more than a 50-line script. It is a complete software engineering system requiring design, testing, and a solid architecture.
 
-🧠 Fase 2: Transformación, Vectorización y Estrategia de Recuperación
+## 🧠 Phase 2: Transformation, Vectorization, and Retrieval Strategy
 
-En esta fase se transformó la data cruda en una estructura optimizada para RAG, priorizando la precisión semántica sin sacrificar la riqueza del contexto necesario para el LLM.
+In this phase, raw data was transformed into an optimized structure for RAG, prioritizing semantic precision without sacrificing the context richness needed for the LLM.
 
-🧩 Estrategia de Splitting (Parent-Document Pattern)
+### 🧩 Splitting Strategy (Parent-Document Pattern)
 
-Se implementó una arquitectura de datos jerárquica para resolver el compromiso entre precisión de búsqueda y ventana de contexto:
+A hierarchical data architecture was implemented to resolve the trade-off between search precision and context window:
 
-Desacoplamiento Contexto/Índice: Generación de Child Chunks pequeños (optimizados para similitud coseno) vinculados a Parent Chunks grandes (optimizados para comprensión del LLM).
+*   **Context/Index Decoupling**: Generation of small *Child Chunks* (optimized for cosine similarity) linked to large *Parent Chunks* (optimized for LLM comprehension).
+*   **Relational Traceability**: Linking via UUIDs and metadata (`parent_id`) to ensure referential integrity between search indices and content storage.
 
-Trazabilidad Relacional: Vinculación mediante UUIDs y metadatos (parent_id) para asegurar la integridad referencial entre índices de búsqueda y almacenamiento de contenido.
+### 💾 Vectorization and Storage (Batching)
 
-💾 Vectorización y Almacenamiento (Batching)
+*   **Local Embeddings**: Integration of `sentence-transformers` (all-MiniLM-L6-v2) for fast local inference, eliminating API costs for vectorization.
+*   **Batch Ingestion**: Implementation of bulk loading (`batch_size=64`) in Qdrant to minimize network latency and optimize write throughput (I/O).
+*   **Idempotency**: Upsert logic based on deterministic IDs to allow pipeline re-runs without generating duplicates.
 
-Embeddings Locales: Integración de sentence-transformers (all-MiniLM-L6-v2) para inferencia local rápida, eliminando costes de API para la vectorización.
+### 🔍 Advanced Retrieval
 
-Ingestión por Lotes: Implementación de carga masiva (batch_size=64) en Qdrant para minimizar la latencia de red y optimizar el throughput de escritura (I/O).
+*   **Query Optimization**: Using Filter Push-down in Qdrant to restrict vector search strictly to "child" fragments.
+*   **Context Reconstruction**: Two-step retrieval logic: Approximate Vector Search (ANN) $\to$ Point Retrieval by ID (Lookup O(1)) to deliver the full parent document to the generative model.
 
-Idempotencia: Lógica de Upsert basada en IDs deterministas para permitir re-ejecuciones del pipeline sin generar duplicados.
+## 🧠 Phase 3: Intelligent Orchestration and Optimization (Advanced RAG)
 
-🔍 Recuperación Avanzada (Retrieval)
+The system evolved from a simple search engine to a conversational assistant with memory and refined reasoning capabilities.
 
-Query Optimization: Uso de Filter Push-down en Qdrant para restringir la búsqueda vectorial estrictamente a los fragmentos "hijos".
+### 🤖 Generation and Memory (LLM Integration)
 
-Reconstrucción de Contexto: Lógica de recuperación en dos pasos: Búsqueda Vectorial Aproximada (ANN) $\to$ Recuperación de Puntos por ID (Lookup O(1)) para entregar el documento padre completo al modelo generativo.
+*   **Gemini 1.5 Integration**: Implementation of the `gemini-1.5-flash` model via `langchain-google-genai` for response synthesis, leveraging its low latency and wide context window.
+*   **History Management (Conversational Memory)**: Development of a manual "Sliding Window" memory system.
+*   **Query Rewriting**: Implementation of an intermediate step where the LLM rephrases the user's question based on chat history (e.g., transforming "And what are its risks?" to "What are the risks of iDML?") before querying the vector database.
 
-🧠 Fase 3: Orquestación Inteligente y Optimización (RAG Avanzado)
+### ⚖️ Reranking (Semantic Precision)
 
-Se evolucionó el sistema de un simple buscador a un asistente conversacional con memoria y capacidad de razonamiento refinada.
+A second filtering stage was added to resolve the limitations of cosine similarity search (Bi-Encoders):
 
-🤖 Generación y Memoria (LLM Integration)
+*   **Two-Stage Retrieval Architecture**:
+    *   **Wide Fetch**: Qdrant retrieves ~20 candidates based on approximate vector similarity.
+    *   **Deep Rerank**: FlashRank (lightweight Cross-Encoder running on CPU) reorders candidates by analyzing the deep interaction between the question and each document.
+*   **Result**: Drastic improvement in the relevance of documents sent to the LLM, discarding "false positives" that look similar vectorially but not semantically.
 
-Integración de Gemini 1.5: Implementación del modelo gemini-1.5-flash vía langchain-google-genai para la síntesis de respuestas, aprovechando su baja latencia y amplia ventana de contexto.
+### 🛡️ Robustness and Design Patterns
 
-Gestión de Historial (Conversational Memory): Desarrollo de un sistema de memoria de ventana deslizante ("Sliding Window") manual.
-
-Query Rewriting: Implementación de un paso intermedio donde el LLM reformula la pregunta del usuario basándose en el historial del chat (ej. transformar "¿Y cuáles son sus riesgos?" a "¿Cuáles son los riesgos del iDML?") antes de consultar la base vectorial.
-
-⚖️ Reranking (Precisión Semántica)
-
-Se añadió una segunda etapa de filtrado para resolver las limitaciones de la búsqueda por similitud coseno (Bi-Encoders):
-
-Arquitectura Two-Stage Retrieval:
-
-Wide Fetch: Qdrant recupera ~20 candidatos basándose en similitud vectorial aproximada.
-
-Deep Rerank: FlashRank (Cross-Encoder ligero corriendo en CPU) reordena los candidatos analizando la interacción profunda entre la pregunta y cada documento.
-
-Resultado: Mejora drástica en la relevancia de los documentos enviados al LLM, descartando "falsos positivos" que se parecen vectorialmente pero no semánticamente.
-
-🛡️ Robustez y Patrones de Diseño
-
-Refactorización SOLID: Aplicación de Dependency Injection en el constructor del chatbot para desacoplar el servicio de recuperación.
-
-Manejo de Fallos (Graceful Degradation): Implementación de bloques try-except personalizados y excepciones VectorDBConnectionError para garantizar que el bot informe problemas de infraestructura amigablemente en lugar de colapsar.
+*   **SOLID Refactoring**: Application of Dependency Injection in the chatbot constructor to decouple the retrieval service.
+*   **Failure Handling (Graceful Degradation)**: Implementation of custom try-except blocks and `VectorDBConnectionError` exceptions to ensure the bot reports infrastructure issues amicably instead of crashing.
